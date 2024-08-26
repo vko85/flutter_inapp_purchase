@@ -507,7 +507,7 @@ class AndroidInappPurchasePlugin internal constructor() : MethodCallHandler,
             val obfuscatedAccountId = call.argument<String>("obfuscatedAccountId")
             val obfuscatedProfileId = call.argument<String>("obfuscatedProfileId")
             val productId = call.argument<String>("productId")
-            val prorationMode = call.argument<Int>("prorationMode")!!
+            val replacementMode = call.argument<Int>("replacementMode")
             val purchaseToken = call.argument<String>("purchaseToken")
             val offerTokenIndex = call.argument<Int>("offerTokenIndex")
             val builder = newBuilder()
@@ -554,25 +554,8 @@ class AndroidInappPurchasePlugin internal constructor() : MethodCallHandler,
                 builder.setObfuscatedProfileId(obfuscatedProfileId)
             }
 
-            when (prorationMode) {
-                -1 -> {} //ignore
-                ProrationMode.IMMEDIATE_AND_CHARGE_PRORATED_PRICE -> {
-                    params.setReplaceProrationMode(ProrationMode.IMMEDIATE_AND_CHARGE_PRORATED_PRICE)
-                    if (type != BillingClient.ProductType.SUBS) {
-                        safeChannel.error(
-                            TAG,
-                            "buyItemByType",
-                            "IMMEDIATE_AND_CHARGE_PRORATED_PRICE for proration mode only works in subscription purchase."
-                        )
-                        return
-                    }
-                }
-                ProrationMode.IMMEDIATE_WITHOUT_PRORATION,
-                ProrationMode.DEFERRED,
-                ProrationMode.IMMEDIATE_WITH_TIME_PRORATION,
-                ProrationMode.IMMEDIATE_AND_CHARGE_FULL_PRICE ->
-                    params.setReplaceProrationMode(prorationMode)
-                else -> params.setReplaceProrationMode(ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY)
+            if (replacementMode != null && replacementMode != -1) {
+                params.setSubscriptionReplacementMode(replacementMode)
             }
 
             if (purchaseToken != null) {
@@ -581,7 +564,6 @@ class AndroidInappPurchasePlugin internal constructor() : MethodCallHandler,
             }
             if (activity != null) {
                 billingClient!!.launchBillingFlow(activity!!, builder.build())
-
             }
         } catch (e: Exception) {
             safeChannel.error(TAG, "buyItemByType", e.message)
