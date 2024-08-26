@@ -1,3 +1,6 @@
+## 5.7.0
+* update android billing library v7 
+* 
 ## 5.6.2
 * On android for inapp products. Fixed NullPointerException: offerToken is required for constructing ProductDetailsParams
 ## 5.6.1
