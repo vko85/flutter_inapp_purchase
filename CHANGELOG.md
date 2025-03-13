@@ -1,3 +1,8 @@
+## 5.7.0
+* update android billing library v7 
+* 
+## 5.6.2
+* On android for inapp products. Fixed NullPointerException: offerToken is required for constructing ProductDetailsParams
 ## 5.6.1
 * Erroneous duplicate item by @deakjahn in https://github.com/dooboolab-community/flutter_inapp_purchase/pull/441
 * Fixed consumable products reading on Android by @33-Elephants in https://github.com/dooboolab-community/flutter_inapp_purchase/pull/439
